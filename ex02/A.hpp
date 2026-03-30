@@ -4,8 +4,6 @@
 
 class A : public Base
 {
-    private:
-        int i;
     public:
         A();
         ~A();

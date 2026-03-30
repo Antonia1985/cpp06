@@ -1,8 +1,8 @@
-NAME = serialize
-CXX = g++
+NAME = identify
+CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
-SRC = main.cpp Serializer.cpp 
+SRC = main.cpp Base.cpp A.cpp B.cpp C.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
