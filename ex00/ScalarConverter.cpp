@@ -51,7 +51,7 @@ static int checkDots(std::string sub)
 {
     size_t indexDot = sub.find('.');
     //check for at least one dot
-    if((indexDot == std::string::npos))
+    if(indexDot == std::string::npos)
     {
         return 0;
     }
@@ -276,12 +276,12 @@ static void convertValues(std::string literal, LiteralType type)
 {   
     bool charPossible = true;
     bool charDisplayable = true;
-    char c;
+    char c = '\0';
     bool intPossible = true;
-    int i;
+    int i = 0;
     bool floatPossible = true;
-    float f;
-    double d;
+    float f = 0.0f;
+    double d = 0.0;
     bool pseudo = false;
 
     //d = strtod(literal.c_str(), NULL);
