@@ -29,7 +29,7 @@ enum LiteralType
 
 static std::string removeTrailingZeros(std::string right)
 {
-    std::string::size_type p = right.find_last_not_of("0"); 
+    std::string::size_type p = right.find_last_not_of('0'); 
     if (p == std::string::npos) 
         right.clear();
     else 
@@ -39,7 +39,7 @@ static std::string removeTrailingZeros(std::string right)
 }
 
 static std::string removeOptional(std::string literal)
-{    
+{
     if((!literal.empty()) && ((literal[0] == '+') || (literal[0] == '-')))
     {
         literal = literal.substr(1);
@@ -82,7 +82,7 @@ static int isPseudoLiteral(const std::string& literal)
     return 0;
 }
 
-static int isCharLiteral(const std::string& literal)
+static int isCharLiteral(const std::string& literal) // non-displayable characters shouldn’t be used as inputs
 {    
     if((literal.size() == 1) && !isdigit(literal[0]))
         return 1;
@@ -220,14 +220,23 @@ static void printValues(
     bool floatPossible,
     float f,
     double d,
-    bool pseudo)
+    bool pseudo,
+    bool hasPlusSign)
 {
     if(pseudo == true)
     {
         std::cout << "char: " << "impossible" << std::endl;
         std::cout << "int: " << "impossible" << std::endl;
-        std::cout << "float: " << f << "f" << std::endl;
-        std::cout << "double: " << d << std::endl;
+        if (hasPlusSign)
+        {
+            std::cout << "float: +" << f << "f" << std::endl;
+            std::cout << "double: +" << d << std::endl;
+        }
+        else
+        {
+            std::cout << "float: " << f << "f" << std::endl;
+            std::cout << "double: " << d << std::endl;
+        }
     }
     else
     {        
@@ -283,23 +292,24 @@ static void convertValues(std::string literal, LiteralType type)
     float f = 0.0f;
     double d = 0.0;
     bool pseudo = false;
+    bool hasPlusSign = false;
 
     //d = strtod(literal.c_str(), NULL);
     switch (type)
     {                
         case CHAR:
         {
-            c = literal[0];
-            if ((c >= 0 && c <= 31 ) || (c == 127))
+            c = literal[0]; // convert it from string to its actual type
+            if ((c >= 0 && c <= 31 ) || (c == 127)) //If a conversion to char is not displayable, print an informative message
             {
                 charDisplayable = false;
             }
-            i = static_cast<int>(c);
+            i = static_cast<int>(c); // then convert it explicitly to the three other data types
             f = static_cast<float>(c);
             d = static_cast<double>(c);
             
             printValues(charPossible, charDisplayable, c, 
-                        intPossible, i, floatPossible, f, d, pseudo);
+                        intPossible, i, floatPossible, f, d, pseudo, hasPlusSign);
             break;
         }
         case INT:
@@ -321,7 +331,7 @@ static void convertValues(std::string literal, LiteralType type)
             f = static_cast<float>(i);
             d = static_cast<double>(i);
             printValues(charPossible, charDisplayable, c, 
-                        intPossible, i, floatPossible, f, d, pseudo);
+                        intPossible, i, floatPossible, f, d, pseudo, hasPlusSign);
             break;
         }
         case FLOAT:
@@ -349,7 +359,7 @@ static void convertValues(std::string literal, LiteralType type)
             }
             d = static_cast<double>(f);
             printValues(charPossible, charDisplayable, c, 
-                        intPossible, i, floatPossible, f, d, pseudo);
+                        intPossible, i, floatPossible, f, d, pseudo, hasPlusSign);
             break;
         }
         case DOUBLE:
@@ -386,23 +396,25 @@ static void convertValues(std::string literal, LiteralType type)
                 f = static_cast<float>(d);
             }
             printValues(charPossible, charDisplayable, c, 
-                        intPossible, i, floatPossible, f, d, pseudo);
+                        intPossible, i, floatPossible, f, d, pseudo, hasPlusSign);
             break;
         }
         case PSEUDO:
         {
             pseudo = true;
+            if(literal[0] == '+')
+                hasPlusSign = true;
             d = strtod(literal.c_str(), NULL);
             f = static_cast<float>(d);
             c = ' ';
             i = 0;
             printValues(charPossible, charDisplayable, c, 
-                        intPossible, i, floatPossible, f, d, pseudo);
+                        intPossible, i, floatPossible, f, d, pseudo, hasPlusSign);
             break;
         }
         case INVALID:
         default:
-            std::cout << "Invalid input" << std::endl;
+            std::cout << "Conversion impossible: bad format or overflowed value" << std::endl;
             break;
     }
 }
@@ -416,3 +428,5 @@ void ScalarConverter::convert(const std::string& literal)
 
 //float has 7 significant digits total
 //double has 15 significant digits total
+
+//for float and double the min() is the smallest representable value sth like: 0,000...00017

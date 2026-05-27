@@ -37,17 +37,17 @@ void identify(Base* p)
             }
             else
             {
-                std::cout << "Type is class C" << std::endl;
+                std::cout << "C" << std::endl;
             }
         }
         else 
         {
-            std::cout << "Type is class B" << std::endl;
+            std::cout << "B" << std::endl;
         }
     }
     else 
     {
-        std::cout << "Type is class A" << std::endl;
+        std::cout << "A" << std::endl;
     }    
 }
 
@@ -56,21 +56,21 @@ void identify(Base& p)
     try
     {
         (void)dynamic_cast<A&>(p);
-        std::cout << "Type is class A" << std::endl;
+        std::cout << "A" << std::endl;
     }
     catch(const std::exception& e)
     {
         try
         {
             (void)dynamic_cast<B&>(p);
-            std::cout << "Type is class B" << std::endl;
+            std::cout << "B" << std::endl;
         }
         catch(const std::exception& e)
         {
             try
             {
                 (void)dynamic_cast<C&>(p);
-                std::cout << "Type is class C" << std::endl;
+                std::cout << "C" << std::endl;
             }
             catch(const std::exception& e)
             {
